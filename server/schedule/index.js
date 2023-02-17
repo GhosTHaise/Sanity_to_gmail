@@ -1,7 +1,13 @@
 const schedule = require("node-schedule");
+const {client,Get_last_contact_data}  = require("../Model/Sanity");
 
-const jobCallBack = () => {
-    console.log("Mande")
+
+/* vatiable global */
+let last_send_id = "";
+
+
+const jobCallBack = async () => {
+    Get_last_contact_data()
 }
 
 /** 
