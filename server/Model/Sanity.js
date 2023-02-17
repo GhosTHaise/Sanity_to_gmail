@@ -1,6 +1,13 @@
 const sanity_client = require("@sanity/client");
+const fs = require("fs");
 require("dotenv").config();
 /* Creatiion du client en variable statique */
+
+const writeFile = (_text) => {
+    fs.writeFileSync("./id_store.ghost",_text,(err)=>{
+        console.log("Unable to save data :"+err);
+    });
+}
 
 const client = sanity_client.createClient({
     projectId : process.env.SANITY_PROJECT_ID,
@@ -10,18 +17,16 @@ const client = sanity_client.createClient({
     token : process.env.SANITY_TOKEN
 })
 
-const Get_last_contact_data = (last_send_id) => {
+const Get_last_contact_data = async () => {
     const query = `*[_type == "contact"]`;
-    let data_rx = {};
-    client.fetch(query)
-    .then(data => {
-        data_rx = data;
-    })
-    .catch( e  => console.log(error));
-    
-    if(last_send_id != data_rx[0]._id){
-        last_send_id = data_rx[0]._id
-        return data_rx[0];
+    try{
+        const data = await client.fetch(query);
+        if(data[0]){
+            writeFile(data[0]?._id) ;
+            return data[0];
+        }
+    }catch( e ){
+        console.log(e);
     }
 }
 module.exports = {
